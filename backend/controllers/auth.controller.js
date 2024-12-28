@@ -80,7 +80,14 @@ export const Logout = async (req , res) => {
         res.json({message : "logged out sucessfully"})       
 
     } catch (error) {
-        console.log('error occured while signing up '+ error);
+        console.log('error occured while logging  out  up '+ error);
         
+    }
+}
+export const profile = async () => { 
+    try {
+        res.status(200).json({user : req.user});
+    } catch (error) {
+        console.log('error occured while getting profile  '+ error);
     }
 }
