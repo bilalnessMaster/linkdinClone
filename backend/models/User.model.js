@@ -65,7 +65,9 @@ const userSchema = new Schema({
             type : mongoose.Schema.Types.ObjectId,
             ref : 'User'
         }
-    ]
+    ],
+    bannerImgPublicId : String , 
+    profilePicturePublicId : String,
 },{timestamps: true})
 
 userSchema.pre('save', async function(next){
@@ -75,13 +77,14 @@ userSchema.pre('save', async function(next){
         this.password = await bcrypt.hash(this.password , salt)
         next()
    } catch (error) {
-    console.log('error occured while hashing password '+error);
+    console.log('error occured while hashing password ' +error);
     next(error)
    }
 })
-userSchema.methods.ComparePassword = async function(pwd){
+userSchema.methods.comparePassword = async function(pwd){
     return bcrypt.compare(pwd , this.password)
 }
+
 
 const User = mongoose.model('User', userSchema)
 

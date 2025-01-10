@@ -37,7 +37,7 @@ export const updateProfile = async (req ,res) => {
         const  payload = req.body
         let updateData = {}
         const allowedUpdate =[
-            'name' , 
+            'name', 
             "headline ",
             'about',
             'location' , 
@@ -51,8 +51,27 @@ export const updateProfile = async (req ,res) => {
             if(payload[key]) updateData[key] = payload[key]
         }
         // before  update data we most upload img to cloud storage and profile ing and banner
-
-        const user = await User.findByIdAndUpdate(req.user._id , updateData , {new : true})
+        if(req.body.profilePicture){
+            const result  = await uploadMedia(req.body.profilePicture , 'profiles')
+            if(result){
+                payload.profilePicture = result.secure_url
+                payload.profilePicturePublicId = result.public_id
+            }
+        }
+        if(req.body.bannerImg){
+            const result  = await uploadMedia(req.body.bannerImg , 'profiles')
+            if(result){
+                payload.bannerImg = result.secure_url
+                payload.bannerImgPublicId = result.public_id
+            }
+        }
+        
+        const user = await User.findByIdAndUpdate(req.user._id , updateData , {new : true}).select('-password')
+        res.status(200).json({
+            success : true , 
+            message  : 'update successfully' , 
+            user
+        })
     } catch (error) {
         console.log('error occured while getPublicProfile  '+ error);
     }

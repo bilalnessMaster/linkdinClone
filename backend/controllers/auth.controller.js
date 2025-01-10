@@ -1,5 +1,6 @@
 import User from '../models/User.model.js'
 import jwt  from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
 import { sendWelcomeEmail } from '../emails/emailHandlers.js'
 dotenv.config()
@@ -55,11 +56,13 @@ export const signUp = async (req , res) => {
 export const signIn = async (req , res) => {
     try {
         const {username , password} = req.body  
-        const user = await User.find({username} )
+ 
+        
+        const user = await User.findOne({username})
         if(!user) return res.status(400).json({message : 'Invalid credentials'})
-        const match = await user.ComparePassword(password)
+        let match = await user.comparePassword(password)
         if(!match) return res.status(400).json({message : 'Invalid credentials'})
-        const token = jwt.sign({userId: newUser._id},process.env.SECRET_KEY,{
+        const token = jwt.sign({userId: user._id},process.env.SECRET_KEY,{
                 expiresIn : '3d'
         })
         res.cookie('token', token, {
@@ -68,9 +71,14 @@ export const signIn = async (req , res) => {
             sameSite : "strict",
             secure : process.env.NODE_ENV  === 'production'
              
-        }).json({message : 'logged in  succesfully'})
+        }).json({success : true , message : 'logged in  succesfully', user : {
+            userId : user._id , 
+            username : user.username , 
+            email : user.email , 
+            profile : user.profilePicture 
+        }})
     } catch (error) {
-        console.log('error occured while signing up '+ error);
+        console.log('error occured while signing in '+ error);
         
     }
 }
