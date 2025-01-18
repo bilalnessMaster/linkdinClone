@@ -71,12 +71,7 @@ export const signIn = async (req , res) => {
             sameSite : "strict",
             secure : process.env.NODE_ENV  === 'production'
              
-        }).json({success : true , message : 'logged in  succesfully', user : {
-            userId : user._id , 
-            username : user.username , 
-            email : user.email , 
-            profile : user.profilePicture 
-        }})
+        }).json({success : true , message : 'logged in  succesfully'})
     } catch (error) {
         console.log('error occured while signing in '+ error);
         
@@ -86,15 +81,13 @@ export const Logout = async (req , res) => {
     try {
         res.clearCookie('token')
         res.json({message : "logged out sucessfully"})       
-
     } catch (error) {
-        console.log('error occured while logging  out  up '+ error);
-        
+        console.log('error occured while logging  out  up '+ error);  
     }
 }
-export const profile = async () => { 
+export const profile = async (req , res) => { 
     try {
-        res.status(200).json({user : req.user});
+        return res.status(200).json(req.user);
     } catch (error) {
         console.log('error occured while getting profile  '+ error);
     }
