@@ -2,11 +2,12 @@
 import { CommentNotificationHanlder } from "../emails/emailHandlers.js";
 import Notification from "../models/Notification.model.js";
 import Post from "../models/Post.model.js";
-
+import {uploadMedia , deleteMedia} from '../lib/cloudinary.js'
 export const createPost = async (req, res) => {
   try {
     let result = null;
-    const { content, image, author } = req.body;
+    const { content, image } = req.body;
+    
     if (image) {
       result = await uploadMedia(image, "posts");
     }
@@ -34,10 +35,9 @@ export const createPost = async (req, res) => {
 
 export const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find({ author: { $in: req.user.connections } })
-      .populate("author", ["usename", "profilePictur", "name"])
+    const posts = await Post.find({ author: { $in: [ ...req.user.connections , req.user._id] } })
+      .populate("author", ["username", "profilePictur", "name"])
       .populate("comments.user", ["profilePictur", "name"])
-      .populate("likes", ["name"])
       .sort({ createdAt: -1 });
     res.status(200).json({
       succes: true,

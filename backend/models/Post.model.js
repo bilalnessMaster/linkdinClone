@@ -15,12 +15,7 @@ const CommentsSchema = new Schema(
   },
   { timestamps: true }
 );
-const likesSchema = new Schema({
-  user : {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  }
-});
+
 const postSchema = new Schema(
   {
     author: {
@@ -34,7 +29,13 @@ const postSchema = new Schema(
       type: String,
     },
     imagePublicId : String , 
-    likes: [likesSchema],
+    likes: [
+       {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        }
+     
+    ],
     comments: [CommentsSchema],
   },
   { timestamps: true }
