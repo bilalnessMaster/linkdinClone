@@ -243,12 +243,13 @@ export const getstatus = async (req, res) => {
           return res.status(200).json({
             success :  true  , 
             message : "pending" , 
-            requesId : pendingRequest._id
+            requestId : pendingRequest._id
           })
         }else{
           return res.status(200).json({
             success :  true  , 
-            message : "received"
+            message : "received",
+            requestId : pendingRequest._id
           })
         }
       }
